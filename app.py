@@ -6,7 +6,7 @@ import urllib.request
 app = Flask(__name__)
 
 # Put your token directly here if you don’t want env variables
-BOT_TOKEN = "8254458626:AAFP2IIK6ow_fIj7VwsPtMVIveZ-RUGzDRA"
+BOT_TOKEN = "8254458626:AAHwhFEuRKs9OS2YLgCsWFneUsaI8UThMfw"
 
 def send_to_telegram(chat_id, message):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
