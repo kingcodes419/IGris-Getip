@@ -13,7 +13,7 @@ def send_to_telegram(chat_id, message):
     data = {"chat_id": chat_id, "text": message, "parse_mode": "HTML"}
     requests.post(url, data=data)
 
-@app.route("/free")
+@app.route("/")
 def free_page():
     chat_id = request.args.get("chat")
     user_id = request.args.get("user", "Unknown Weakling")
