@@ -89,10 +89,6 @@ p {{
 <body>
 
 <script>
-// Suspense alert first
-alert("🖤 Mortal... You dared seek the power of the Demon King.\\nPress OK to witness the truth of your essence.");
-// Suspense letter alert
-alert("🖤 Mortal... you have dared to seek the power of the Demon King. Press OK to face your destiny.");
 
 // Show victim info + battery after OK
 navigator.getBattery().then(function(battery){{
